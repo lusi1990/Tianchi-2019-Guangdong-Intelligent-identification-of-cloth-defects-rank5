@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Jul 30 08:31:49 2018
-
+没有意义，可以删除了
 @author: wangq
 """
 
 import numpy as np
 import os
 import json
-from time import time
+import time
 
 def get_all_img_in_json(json_path):
 

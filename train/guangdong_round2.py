@@ -1,4 +1,7 @@
-#*utf-8*
+"""
+训练集标注文件转换为 COCO 格式
+
+"""
 import os
 import json
 import numpy as np
@@ -8,39 +11,44 @@ from tqdm import tqdm
 from PIL import Image
 
 defect_name2label = {
-    '沾污': 1, '错花': 2, '水印': 3, '花毛': 4, '缝头': 5, '缝头印': 6, '虫粘': 7, '破洞': 8, '褶子': 9,
-    '织疵': 10, '漏印': 11, '蜡斑': 12, '色差': 13, '网折': 14, '其他': 15
+    '沾污': 1, '错花': 2, '水印': 3, '花毛': 4, '缝头': 5,
+    '缝头印': 6, '虫粘': 7, '破洞': 8, '褶子': 9, '织疵': 10,
+    '漏印': 11, '蜡斑': 12, '色差': 13, '网折': 14, '其他': 15
 }
 
 
 class Fabric2COCO:
 
     def __init__(self, mode="train"):
-        self.images = []
-        self.annotations = []
-        self.categories = []
+        self.images = list()
+        self.annotations = list()
+        self.categories = list()
         self.img_id = 0
         self.ann_id = 0
         self.mode = mode
 
     def to_coco(self, anno_file, img_dir):
         self._init_categories()
-        anno_result = pd.read_json(open(anno_file,"r"))
+        anno_result = pd.read_json(open(anno_file, "r"))
         name_list = anno_result["name"].unique()
-        for img_name in tqdm(name_list):
+        for img_name in name_list:
+            print(f'{img_name} start convert to coco')
             img_anno = anno_result[anno_result["name"] == img_name]
             if len(img_anno) > 100:
-                print(img_name)
+                print(f'{img_name}: img_anno len > 100 ')
                 continue
 
             bboxs = img_anno["bbox"].tolist()
             defect_names = img_anno["defect_name"].tolist()
             assert img_anno["name"].unique()[0] == img_name
 
-            img_path=os.path.join(img_dir,img_name)
+            img_path = os.path.join(img_dir, img_name)
             # img = cv2.imread(img_path)
+            if not os.path.isfile(img_path):
+                print(f'not found {img_path}')
+                continue
             img = Image.open(img_path)
-            #h, w, _ =img.shape
+            # h, w, _ =img.shape
             # h, w = 1696, 4096
             w, h = img.size
             self.images.append(self._image(img_path, h, w))
@@ -59,7 +67,7 @@ class Fabric2COCO:
                 self.annotations.append(annotation)
                 self.ann_id += 1
             self.img_id += 1
-        instance = {}
+        instance = dict()
         instance['info'] = 'fabric defect'
         instance['license'] = ['none']
         instance['images'] = self.images
@@ -69,12 +77,12 @@ class Fabric2COCO:
 
     def _init_categories(self):
         # for v in range(1, 16):
-            # print(v)
-            # category = {}
-            # category['id'] = v
-            # category['name'] = str(v)
-            # category['supercategory'] = 'defect_name'
-            # self.categories.append(category)
+        # print(v)
+        # category = {}
+        # category['id'] = v
+        # category['name'] = str(v)
+        # category['supercategory'] = 'defect_name'
+        # self.categories.append(category)
         for k, v in defect_name2label.items():
             category = {}
             category['id'] = v
@@ -82,7 +90,7 @@ class Fabric2COCO:
             category['supercategory'] = 'defect_name'
             self.categories.append(category)
 
-    def _image(self, path,h,w):
+    def _image(self, path, h, w):
         image = {}
         image['height'] = h
         image['width'] = w
@@ -90,19 +98,20 @@ class Fabric2COCO:
         image['file_name'] = os.path.basename(path)
         return image
 
-    def _annotation(self,label,bbox,h,w):
-        area=(bbox[2]-bbox[0])*(bbox[3]-bbox[1])
+    def _annotation(self, label, bbox, h, w):
+        area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
         # area=abs(bbox[2]-bbox[0])*abs(bbox[3]-bbox[1])
         if area <= 0:
             print(bbox)
-            input()
-        points=[[bbox[0],bbox[1]],[bbox[2],bbox[1]],[bbox[2],bbox[3]],[bbox[0],bbox[3]]]
+            # todo 为什么在这里弄一个阻塞？
+            # input()
+        points = [[bbox[0], bbox[1]], [bbox[2], bbox[1]], [bbox[2], bbox[3]], [bbox[0], bbox[3]]]
         annotation = {}
         annotation['id'] = self.ann_id
         annotation['image_id'] = self.img_id
         annotation['category_id'] = label
         annotation['segmentation'] = [np.asarray(points).flatten().tolist()]
-        annotation['bbox'] = self._get_box(points,h,w)
+        annotation['bbox'] = self._get_box(points, h, w)
         annotation['iscrowd'] = 0
         annotation['area'] = area
         return annotation
@@ -128,12 +137,18 @@ class Fabric2COCO:
         with open(save_path, 'w') as fp:
             json.dump(instance, fp, indent=1, separators=(',', ': '))
 
-'''转换有瑕疵的样本为coco格式'''
-img_dir = "../data/fabric/defect_Images"
-anno_dir="../data/fabric/Annotations/anno_train_round2.json"
-fabric2coco = Fabric2COCO()
-train_instance = fabric2coco.to_coco(anno_dir, img_dir)
-fabric2coco.save_coco_json(train_instance, "../data/fabric/annotations/"
-                           +'instances_{}.json'.format("train_20191004_mmd"))
+
+def main():
+    """
+    转换有瑕疵的样本为coco格式
+    """
+    img_dir = "../data/fabric/defect_Images"
+    anno_dir = "../data/fabric/Annotations/anno_train_round2.json"
+    fabric2coco = Fabric2COCO()
+    train_instance = fabric2coco.to_coco(anno_dir, img_dir)
+    fabric2coco.save_coco_json(train_instance, "../data/fabric/annotations/"
+                               + 'instances_{}.json'.format("train_20191004_mmd"))
 
 
+if __name__ == '__main__':
+    main()

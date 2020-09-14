@@ -1,3 +1,7 @@
+"""
+合并 json
+"""
+
 import json
 
 json_file1 = "../data/fabric/Annotations/anno_train_20190925.json"

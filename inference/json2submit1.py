@@ -1,9 +1,12 @@
 import json
+import os
+
 from tqdm import tqdm
 
 # isfilter = True
-test_json_raw = json.load(open("../data/fabric/annotations/fabric_testa_round2.json", "r"))
-test_json = json.load(open('../data/result_map.bbox.json', "r"))
+PROJECT_HOME = os.path.dirname(os.path.dirname(__file__))
+test_json_raw = json.load(open(os.path.join(PROJECT_HOME, "data/fabric/annotations/fabric_testa_round2.json"), "r"))
+test_json = json.load(open(os.path.join(PROJECT_HOME, 'data/result_map.bbox.json'), "r"))
 
 raw_image_filenames = []
 images_ids = {}
@@ -11,7 +14,6 @@ for img in test_json_raw["images"]:
     images_ids[img["id"]] = img["file_name"]
     raw_image_filenames.append(img["file_name"])
 raw_image_filenames = set(raw_image_filenames)
-
 
 img_scores = dict()
 for anno in tqdm(test_json):

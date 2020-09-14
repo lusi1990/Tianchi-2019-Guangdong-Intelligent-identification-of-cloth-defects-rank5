@@ -20,6 +20,7 @@ def single_gpu_test(model, data_loader, show=False):
     model.eval()
     results = []
     dataset = data_loader.dataset
+    print(dataset,len(dataset))
     prog_bar = mmcv.ProgressBar(len(dataset))
     for i, data in enumerate(data_loader):
         with torch.no_grad():
@@ -64,7 +65,7 @@ def collect_results(result_part, size, tmpdir=None):
     if tmpdir is None:
         MAX_LEN = 512
         # 32 is whitespace
-        dir_tensor = torch.full((MAX_LEN, ),
+        dir_tensor = torch.full((MAX_LEN,),
                                 32,
                                 dtype=torch.uint8,
                                 device='cuda')
@@ -154,10 +155,12 @@ def main():
         distributed = False
     else:
         distributed = True
+        print(args)
         init_dist(args.launcher, **cfg.dist_params)
 
     # build the dataloader
     # TODO: support multiple images per gpu (only minor changes are needed)
+    print(cfg.data.test)
     dataset = build_dataset(cfg.data.test)
     data_loader = build_dataloader(
         dataset,
@@ -211,13 +214,17 @@ def main():
 
     # Save predictions in the COCO json format
     if args.json_out and rank == 0:
-        if not isinstance(outputs[0], dict):
+        print('\noutputs', outputs)
+        if not outputs:
             results2json(dataset, outputs, args.json_out)
         else:
-            for name in outputs[0]:
-                outputs_ = [out[name] for out in outputs]
-                result_file = args.json_out + '.{}'.format(name)
-                results2json(dataset, outputs_, result_file)
+            if not isinstance(outputs[0], dict):
+                results2json(dataset, outputs, args.json_out)
+            else:
+                for name in outputs[0]:
+                    outputs_ = [out[name] for out in outputs]
+                    result_file = args.json_out + '.{}'.format(name)
+                    results2json(dataset, outputs_, result_file)
 
 
 if __name__ == '__main__':

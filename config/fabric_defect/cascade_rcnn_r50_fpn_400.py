@@ -1,4 +1,6 @@
 # fp16 settings
+import os
+
 fp16 = dict(loss_scale=512.)
 # model settings
 model = dict(
@@ -161,11 +163,13 @@ test_cfg = dict(
         min_bbox_size=0),
     rcnn=dict(
         score_thr=0.001, nms=dict(type='nms', iou_thr=0.5), max_per_img=100),
-        #score_thr=0.001, nms=dict(type='soft_nms', iou_thr=0.3, min_score=0.001), max_per_img=100),
+    # score_thr=0.001, nms=dict(type='soft_nms', iou_thr=0.3, min_score=0.001), max_per_img=100),
     keep_all_stages=False)
 # dataset settings
 dataset_type = 'FabricDataset'
-data_root = '../data/fabric/'
+PROJECT_HOME = '/home/lu/PycharmProjects/Tianchi-2019-Guangdong-Intelligent-identification-of-cloth-defects-rank5'
+data_root = os.path.join(PROJECT_HOME, 'data/fabric/')
+print('400',data_root)
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -204,18 +208,18 @@ data = dict(
     workers_per_gpu=4,
     train=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_train_20191004_mmd_100.json',
-        img_prefix=data_root + 'defect_Images/',
+        ann_file=os.path.join(data_root, 'annotations/instances_train_20191004_mmd_100.json'),
+        img_prefix=os.path.join(data_root, 'defect_Images/'),
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_val2017.json',
-        img_prefix=data_root + 'val2017/',
+        ann_file=os.path.join(data_root, 'annotations/instances_val2017.json'),
+        img_prefix=os.path.join(data_root, 'val2017/'),
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/fabric_testa_round2.json',
-        img_prefix='/tcdata/guangdong1_round2_testB_20191024/',
+        ann_file=os.path.join(data_root, 'annotations/fabric_testa_round2.json'),
+        img_prefix=os.path.join(PROJECT_HOME, '/tcdata/guangdong1_round2_testB_20191024/'),
         pipeline=test_pipeline))
 # optimizer
 optimizer = dict(type='SGD', lr=0.03, momentum=0.9, weight_decay=0.0001)
@@ -241,7 +245,8 @@ log_config = dict(
 total_epochs = 70
 dist_params = dict(backend='nccl', port='2021')
 log_level = 'INFO'
-work_dir = '../data/work_dirs/cascade_rcnn_r50_fpn_400'
-load_from = '../data/pretrained/concatenate_coco_pretrained_cascade_rcnn_r50_fpn_20e_20181123-db483a09.pth'
+work_dir = os.path.join(PROJECT_HOME, 'data/work_dirs/cascade_rcnn_r50_fpn_400')
+load_from = os.path.join(PROJECT_HOME,
+                         'data/pretrained/concatenate_coco_pretrained_cascade_rcnn_r50_fpn_20e_20181123-db483a09.pth')
 resume_from = None
 workflow = [('train', 1)]

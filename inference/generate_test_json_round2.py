@@ -29,23 +29,22 @@ def save(images, annotations, name):
             {'id': 15, 'name': '15', 'supercategory': 'fabric'}
     ]
     ann['categories'] = category
-    json.dump(ann, open('data/fabric/annotations/fabric_{}.json'.format(name), 'w'))
+    json.dump(ann, open('./data/fabric/annotations/fabric_{}.json'.format(name), 'w'))
 
 
 def test_dataset(im_dir):
-    im_list = glob(im_dir + '/*/*.jpg')
+    im_list = glob(im_dir + '/*/*.bmp')
     idx = 1
     image_id = 20190000000
     images = []
     annotations = []
     #h, w, = 1696, 4096
     for im_path in tqdm(im_list):
-        #image_id += 1
         if 'template' in os.path.split(im_path)[-1]:
             continue
         #im = cv2.imread(im_path)
-        im = Image.open(im_path)
         #h, w = im.[:2]
+        im = Image.open(im_path)
         w, h = im.size
         image_id += 1
         image = {'file_name': os.path.split(im_path)[-1].split(".")[0] + "/" +
@@ -63,6 +62,6 @@ def test_dataset(im_dir):
 
 
 if __name__ == '__main__':
-    test_dir = '/tcdata/guangdong1_round2_testB_20191024'
+    test_dir = '/home/lu/PycharmProjects/Tianchi-2019-Guangdong-Intelligent-identification-of-cloth-defects-rank5/tcdata/guangdong1_round2_testB_20191024'
     print("generate test json label file.")
     test_dataset(test_dir)

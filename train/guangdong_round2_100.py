@@ -1,11 +1,13 @@
-#*utf-8*
+"""
+将图片转为 coco
+"""
 import os
 import json
+
 import numpy as np
-import shutil
 import pandas as pd
-from tqdm import tqdm
 from PIL import Image
+from tqdm import tqdm
 
 defect_name2label = {
     '沾污': 1, '错花': 2, '水印': 3, '花毛': 4, '缝头': 5, '缝头印': 6, '虫粘': 7, '破洞': 8, '褶子': 9,
@@ -25,7 +27,7 @@ class Fabric2COCO:
 
     def to_coco(self, anno_file, img_dir):
         self._init_categories()
-        anno_result = pd.read_json(open(anno_file,"r"))
+        anno_result = pd.read_json(open(anno_file, "r"))
         name_list = anno_result["name"].unique()
         for img_name in tqdm(name_list):
             img_anno = anno_result[anno_result["name"] == img_name]
@@ -37,7 +39,10 @@ class Fabric2COCO:
             defect_names = img_anno["defect_name"].tolist()
             assert img_anno["name"].unique()[0] == img_name
 
-            img_path=os.path.join(img_dir,img_name)
+            img_path = os.path.join(img_dir, img_name)
+            if not os.path.isfile(img_path):
+                print(f'not found {img_path}')
+                continue
             img = Image.open(img_path)
             w, h = img.size
             isvailud = False
@@ -60,7 +65,7 @@ class Fabric2COCO:
             if isvailud:
                 self.images.append(self._image(img_path, h, w))
                 self.img_id += 1
-        instance = {}
+        instance = dict()
         instance['info'] = 'fabric defect'
         instance['license'] = ['none']
         instance['images'] = self.images
@@ -70,37 +75,37 @@ class Fabric2COCO:
 
     def _init_categories(self):
         # for v in range(1, 16):
-            # print(v)
-            # category = {}
-            # category['id'] = v
-            # category['name'] = str(v)
-            # category['supercategory'] = 'defect_name'
-            # self.categories.append(category)
+        # print(v)
+        # category = {}
+        # category['id'] = v
+        # category['name'] = str(v)
+        # category['supercategory'] = 'defect_name'
+        # self.categories.append(category)
         for k, v in defect_name2label.items():
-            category = {}
+            category = dict()
             category['id'] = v
             category['name'] = k
             category['supercategory'] = 'defect_name'
             self.categories.append(category)
 
-    def _image(self, path,h,w):
-        image = {}
+    def _image(self, path, h, w):
+        image = dict()
         image['height'] = h
         image['width'] = w
         image['id'] = self.img_id
         image['file_name'] = os.path.basename(path)
         return image
 
-    def _annotation(self,label,bbox,h,w):
-        area=(bbox[2]-bbox[0])*(bbox[3]-bbox[1])
+    def _annotation(self, label, bbox, h, w):
+        area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
         # area=abs(bbox[2]-bbox[0])*abs(bbox[3]-bbox[1])
-        points=[[bbox[0],bbox[1]],[bbox[2],bbox[1]],[bbox[2],bbox[3]],[bbox[0],bbox[3]]]
-        annotation = {}
+        points = [[bbox[0], bbox[1]], [bbox[2], bbox[1]], [bbox[2], bbox[3]], [bbox[0], bbox[3]]]
+        annotation = dict()
         annotation['id'] = self.ann_id
         annotation['image_id'] = self.img_id
         annotation['category_id'] = label
         annotation['segmentation'] = [np.asarray(points).flatten().tolist()]
-        annotation['bbox'] = self._get_box(points,h,w)
+        annotation['bbox'] = self._get_box(points, h, w)
         annotation['iscrowd'] = 0
         annotation['area'] = area
         return annotation
@@ -126,12 +131,11 @@ class Fabric2COCO:
         with open(save_path, 'w') as fp:
             json.dump(instance, fp, indent=1, separators=(',', ': '))
 
+
 '''转换有瑕疵的样本为coco格式'''
 img_dir = "../data/fabric/defect_Images"
-anno_dir="../data/fabric/Annotations/anno_train_round2.json"
+anno_dir = "../data/fabric/Annotations/anno_train_round2.json"
 fabric2coco = Fabric2COCO()
 train_instance = fabric2coco.to_coco(anno_dir, img_dir)
 fabric2coco.save_coco_json(train_instance, "../data/fabric/annotations/"
-                           +'instances_{}.json'.format("train_20191004_mmd_100"))
-
-
+                           + 'instances_{}.json'.format("train_20191004_mmd_100"))

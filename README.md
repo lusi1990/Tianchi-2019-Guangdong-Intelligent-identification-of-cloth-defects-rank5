@@ -12,7 +12,7 @@
 [百度网盘](https://pan.baidu.com/s/1DT8vlFELrjfgczGBZ1yEzQ) (密码：jp7d)
 
 ## TIPS:
-因为官方给的原始数据压缩包大于4gb，我这里对每一个包进行了分卷压缩，大家注意分卷解压缩使用
+因为官方给的原始数据压缩包大于 4 gb，我这里对每一个包进行了分卷压缩，大家注意分卷解压缩使用
 
 ## core slides:
 ![Aaron Swartz](https://github.com/zhengye1995/Tianchi-2019-Guangdong-Intelligent-identification-of-cloth-defects-rank5/raw/master/temp_img/%E5%9B%BE%E7%89%871.png)
@@ -130,11 +130,14 @@
         conda install pytorch=1.1.0 torchvision=0.3.0 cudatoolkit=10.0 -c pytorch
         
    3. 安装其他依赖
-        pip install cython && pip --no-cache-dir install -r requirements.txt
+        pip install cython && pip   install -r requirements.txt
    
    4. 编译cuda op等：
-        python setup.py develop
+        python setup.py develop 
    
+- #### PS.
+
+linux 需要安装 ninja-build 
 
 ## 模型训练及预测
     
@@ -150,7 +153,13 @@
         2. **运行:**
 		./run.sh
    
-    
+## TODO
+
+* 定期保存模型
+
+* 加载模型继续训练
+
+* 明白验证集在哪里， 训练一轮验证一次成功率 
 
 ## Contact
 

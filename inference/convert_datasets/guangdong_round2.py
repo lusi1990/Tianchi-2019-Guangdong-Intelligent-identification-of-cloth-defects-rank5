@@ -95,7 +95,8 @@ class Fabric2COCO:
         # area=abs(bbox[2]-bbox[0])*abs(bbox[3]-bbox[1])
         if area <= 0:
             print(bbox)
-            input()
+            # todo why input
+            # input()
         points=[[bbox[0],bbox[1]],[bbox[2],bbox[1]],[bbox[2],bbox[3]],[bbox[0],bbox[3]]]
         annotation = {}
         annotation['id'] = self.ann_id

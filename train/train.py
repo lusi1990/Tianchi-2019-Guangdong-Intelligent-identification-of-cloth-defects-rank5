@@ -27,7 +27,7 @@ def parse_args():
         type=int,
         default=1,
         help='number of gpus to use '
-        '(only applicable to non-distributed training)')
+             '(only applicable to non-distributed training)')
     parser.add_argument('--seed', type=int, default=None, help='random seed')
     parser.add_argument(
         '--launcher',
@@ -95,13 +95,12 @@ def main():
             CLASSES=datasets[0].CLASSES)
     # add an attribute for visualization convenience
     model.CLASSES = datasets[0].CLASSES
-    train_detector(
-        model,
-        datasets,
-        cfg,
-        distributed=distributed,
-        validate=args.validate,
-        logger=logger)
+    train_detector(model,
+                   datasets,
+                   cfg,
+                   distributed=distributed,
+                   validate=args.validate,
+                   logger=logger)
 
 
 if __name__ == '__main__':
