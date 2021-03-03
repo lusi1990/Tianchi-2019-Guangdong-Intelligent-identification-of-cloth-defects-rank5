@@ -42,5 +42,5 @@ for anno in tqdm(test_json):
         results.append(
             {'name': filename, 'category': int(label), 'bbox': [xmin, ymin, xmax, ymax], 'score': float(score)})
 
-with open('../data/result_map.json', 'w') as fp:
+with open('./data/result_map.json', 'w') as fp:
     json.dump(results, fp, indent=4, separators=(',', ': '))

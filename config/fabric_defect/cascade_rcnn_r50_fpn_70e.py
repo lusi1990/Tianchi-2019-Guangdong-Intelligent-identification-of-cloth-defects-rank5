@@ -1,7 +1,6 @@
 # fp16 settings
 import os
 
-
 fp16 = dict(loss_scale=512.)
 # model settings
 model = dict(
@@ -221,7 +220,7 @@ data = dict(
     test=dict(
         type=dataset_type,
         ann_file=os.path.join(data_root, 'annotations/fabric_testa_round2.json'),
-        img_prefix=os.path.join(PROJECT_HOME, 'tcdata/guangdong1_round2_testB_20191024/'),
+        img_prefix='/tcdata/guangdong1_round2_testB_20191024/',
         pipeline=test_pipeline))
 # optimizer
 optimizer = dict(type='SGD', lr=0.005, momentum=0.9, weight_decay=0.0001)

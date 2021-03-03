@@ -169,7 +169,7 @@ test_cfg = dict(
 dataset_type = 'FabricDataset'
 PROJECT_HOME = '/home/lu/PycharmProjects/Tianchi-2019-Guangdong-Intelligent-identification-of-cloth-defects-rank5'
 data_root = os.path.join(PROJECT_HOME, 'data/fabric/')
-print('400',data_root)
+print('400', data_root)
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -219,7 +219,7 @@ data = dict(
     test=dict(
         type=dataset_type,
         ann_file=os.path.join(data_root, 'annotations/fabric_testa_round2.json'),
-        img_prefix=os.path.join(PROJECT_HOME, '/tcdata/guangdong1_round2_testB_20191024/'),
+        img_prefix='/tcdata/guangdong1_round2_testB_20191024/',
         pipeline=test_pipeline))
 # optimizer
 optimizer = dict(type='SGD', lr=0.03, momentum=0.9, weight_decay=0.0001)
