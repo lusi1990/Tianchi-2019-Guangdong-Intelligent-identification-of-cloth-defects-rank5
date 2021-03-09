@@ -172,6 +172,7 @@ data_root = os.path.join(PROJECT_HOME, 'data/fabric/')
 print('400', data_root)
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
+# img_scale is diff
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True),
@@ -204,8 +205,8 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    imgs_per_gpu=6,
-    workers_per_gpu=4,
+    imgs_per_gpu=1,
+    workers_per_gpu=2,
     train=dict(
         type=dataset_type,
         ann_file=os.path.join(data_root, 'annotations/instances_train_20191004_mmd_100.json'),
@@ -221,7 +222,7 @@ data = dict(
         ann_file=os.path.join(data_root, 'annotations/fabric_testa_round2.json'),
         img_prefix='/tcdata/guangdong1_round2_testB_20191024/',
         pipeline=test_pipeline))
-# optimizer
+# optimizer lr is diff
 optimizer = dict(type='SGD', lr=0.03, momentum=0.9, weight_decay=0.0001)
 # optimizer = dict(type='SGD', lr=0.00375, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
@@ -241,7 +242,7 @@ log_config = dict(
         # dict(type='TensorboardLoggerHook')
     ])
 # yapf:enable
-# runtime settings
+# runtime settings port is diff
 total_epochs = 70
 dist_params = dict(backend='nccl', port='2021')
 log_level = 'INFO'

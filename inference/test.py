@@ -20,7 +20,7 @@ def single_gpu_test(model, data_loader, show=False):
     model.eval()
     results = []
     dataset = data_loader.dataset
-    print(dataset,len(dataset))
+    print(dataset, len(dataset))
     prog_bar = mmcv.ProgressBar(len(dataset))
     for i, data in enumerate(data_loader):
         with torch.no_grad():
@@ -214,7 +214,7 @@ def main():
 
     # Save predictions in the COCO json format
     if args.json_out and rank == 0:
-        print('\noutputs', outputs)
+        # print('\noutputs', outputs)
         if not outputs:
             results2json(dataset, outputs, args.json_out)
         else:

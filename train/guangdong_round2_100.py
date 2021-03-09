@@ -18,9 +18,9 @@ defect_name2label = {
 class Fabric2COCO:
 
     def __init__(self, mode="train"):
-        self.images = []
-        self.annotations = []
-        self.categories = []
+        self.images = list()
+        self.annotations = list()
+        self.categories = list()
         self.img_id = 0
         self.ann_id = 0
         self.mode = mode
@@ -32,7 +32,7 @@ class Fabric2COCO:
         for img_name in tqdm(name_list):
             img_anno = anno_result[anno_result["name"] == img_name]
             if len(img_anno) > 100:
-                print(img_name)
+                print(f'{img_name}: img_anno len > 100 ')
                 continue
 
             bboxs = img_anno["bbox"].tolist()
@@ -45,16 +45,16 @@ class Fabric2COCO:
                 continue
             img = Image.open(img_path)
             w, h = img.size
+            # 不一样的地方是 这里选取 area 大于 100 的 数据
             isvailud = False
             for bbox, defect_name in zip(bboxs, defect_names):
                 if bbox[1] >= h:
-                    # print(bbox)
+                    print(f'高度超出 bbox:{bbox}', )
                     continue
                 if bbox[0] >= w:
-                    # print(bbox)
+                    print(f'宽度超出 bbox:{bbox}', )
                     continue
                 area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
-                # area=abs(bbox[2]-bbox[0])*abs(bbox[3]-bbox[1])
                 if area < 100:
                     continue
                 label = defect_name2label[defect_name]
@@ -74,13 +74,6 @@ class Fabric2COCO:
         return instance
 
     def _init_categories(self):
-        # for v in range(1, 16):
-        # print(v)
-        # category = {}
-        # category['id'] = v
-        # category['name'] = str(v)
-        # category['supercategory'] = 'defect_name'
-        # self.categories.append(category)
         for k, v in defect_name2label.items():
             category = dict()
             category['id'] = v
@@ -98,7 +91,8 @@ class Fabric2COCO:
 
     def _annotation(self, label, bbox, h, w):
         area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
-        # area=abs(bbox[2]-bbox[0])*abs(bbox[3]-bbox[1])
+        if area <= 0:
+            print(f'area 小于 0 bbox:{bbox}')
         points = [[bbox[0], bbox[1]], [bbox[2], bbox[1]], [bbox[2], bbox[3]], [bbox[0], bbox[3]]]
         annotation = dict()
         annotation['id'] = self.ann_id
@@ -132,10 +126,16 @@ class Fabric2COCO:
             json.dump(instance, fp, indent=1, separators=(',', ': '))
 
 
-'''转换有瑕疵的样本为coco格式'''
-img_dir = "../data/fabric/defect_Images"
-anno_dir = "../data/fabric/Annotations/anno_train_round2.json"
-fabric2coco = Fabric2COCO()
-train_instance = fabric2coco.to_coco(anno_dir, img_dir)
-fabric2coco.save_coco_json(train_instance, "../data/fabric/annotations/"
-                           + 'instances_{}.json'.format("train_20191004_mmd_100"))
+def main():
+    """
+    转换有瑕疵的样本为coco格式
+    """
+    img_dir = "../data/fabric/defect_Images"
+    anno_dir = "../data/fabric/Annotations/anno_train_round2.json"
+    fabric2coco = Fabric2COCO()
+    train_instance = fabric2coco.to_coco(anno_dir, img_dir)
+    fabric2coco.save_coco_json(train_instance, '../data/fabric/annotations/instances_train_20191004_mmd_100.json')
+
+
+if __name__ == '__main__':
+    main()
