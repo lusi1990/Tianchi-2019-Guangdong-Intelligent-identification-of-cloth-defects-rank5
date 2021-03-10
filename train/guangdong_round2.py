@@ -31,7 +31,7 @@ class Fabric2COCO:
         for img_name in name_list:
             img_anno = anno_result[anno_result["name"] == img_name]
             if len(img_anno) > 100:
-                print(f'{img_name}: img_anno len > 100 ')
+                print(f'{img_name}: img_anno len > 100,图片标注数量大于100 ')
                 continue
 
             bboxs = img_anno["bbox"].tolist()

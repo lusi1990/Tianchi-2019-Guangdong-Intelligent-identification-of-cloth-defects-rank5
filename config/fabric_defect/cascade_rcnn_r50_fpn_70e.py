@@ -169,7 +169,7 @@ test_cfg = dict(
 # dataset settings
 dataset_type = 'FabricDataset'
 PROJECT_HOME = '/home/lu/PycharmProjects/Tianchi-2019-Guangdong-Intelligent-identification-of-cloth-defects-rank5'
-data_root = os.path.join(PROJECT_HOME, 'data/fabric')
+data_root = os.path.join(PROJECT_HOME, 'data/fabric/')
 print('70e', data_root)
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DATA_HOME="/media/lu/办公/data/天池广东2019布匹瑕疵检测"
+DATA_HOME="/home/lu/WorkData/data/天池广东2019布匹瑕疵检测"
 
 rm -rf ../data/fabric/
 rm -rf ../data/pretrained/
@@ -10,11 +10,7 @@ mkdir -p ../data/fabric/annotations
 mkdir -p ../data/fabric/Annotations
 mkdir -p ../data/pretrained
 
-cp -r $DATA_HOME/guangdong1_round2_train_part1_20190924/defect/*/*.jpg ../data/fabric/defect_Images/ &&
-  cp -r $DATA_HOME/guangdong1_round2_train_part2_20190924/defect/*/*.jpg ../data/fabric/defect_Images/ &&
-  cp -r $DATA_HOME/guangdong1_round2_train_part3_20190924/defect/*/*.jpg ../data/fabric/defect_Images/ &&
-  cp -r $DATA_HOME/guangdong1_round2_train2_20191004_images/defect/*/*.jpg ../data/fabric/defect_Images/
-rm ../data/fabric/defect_Images/template*
+python3 copy_detect_images.py -d $DATA_HOME
 
 cp -r $DATA_HOME/guangdong1_round2_train_part1_20190924/defect/* ../data/fabric/template_Images/ &&
   cp -r $DATA_HOME/guangdong1_round2_train_part2_20190924/defect/* ../data/fabric/template_Images/ &&
