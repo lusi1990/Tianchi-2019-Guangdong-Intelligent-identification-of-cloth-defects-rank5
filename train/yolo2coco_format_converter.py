@@ -1,9 +1,12 @@
-import os
+#! /usr/bin/env python3
 
+import os
 import cv2
 import argparse
 import json
+
 import numpy as np
+from tqdm import tqdm
 
 #################################################
 # Change the classes depend on your own dataset.#
@@ -11,7 +14,6 @@ import numpy as np
 #################################################
 
 # Class에 맞게 바꿔줘야함
-from tqdm import tqdm
 
 CLASSES = []
 
@@ -71,6 +73,8 @@ def images_annotations_info(opt):
     images_path = os.path.join(path, 'images')
     for name in os.listdir(labels_path):
         if name == 'classes.txt':
+            classes = open(os.path.join(labels_path, name)).read().splitlines()
+            CLASSES.extend(classes)
             continue
         image_name = name.replace('.txt', '.jpeg')
         file_paths[os.path.join(images_path, image_name)] = name
@@ -194,7 +198,7 @@ def get_args():
     parser = argparse.ArgumentParser('Yolo format annotations to COCO dataset format')
     parser.add_argument('-p', '--path', type=str, help='Absolute path for images and label home')
     parser.add_argument('--debug', action='store_true', help='Visualize bounding box and print annotation information')
-    parser.add_argument('--output', type=str, help='Name the output json file')
+    parser.add_argument('--output', type=str, help='path for output file')
 
     args = parser.parse_args()
     return args
@@ -202,8 +206,6 @@ def get_args():
 
 if __name__ == '__main__':
     opt = get_args()
-    output_name = opt.output
-    output_path = 'output/' + output_name + '.json'
 
     print("Start!")
 
@@ -222,7 +224,7 @@ if __name__ == '__main__':
             }
             coco_format['categories'].append(ann)
 
-        with open(output_path, 'w') as outfile:
-            json.dump(coco_format, outfile)
+        with open(opt.output, 'w') as outfile:
+            json.dump(coco_format, outfile, indent=1)
 
         print("Finished!")
