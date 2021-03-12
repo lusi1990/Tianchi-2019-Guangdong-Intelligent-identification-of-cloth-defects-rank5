@@ -1,3 +1,4 @@
+# 转换 疵点标注格式 coco 格式 转为 ，左上 右下 点, 补全 图片信息
 import json
 import os
 
