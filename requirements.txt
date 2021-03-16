@@ -8,3 +8,6 @@ pycocotools
 imagecorruptions
 albumentations>=0.3.2
 tqdm>=4.36.1
+# 安装可视化，tensorboard --logdir data/work_dirs/cascade_rcnn_r50_fpn_70e/ --host 0.0.0.0
+tensorboard
+tensorboardX

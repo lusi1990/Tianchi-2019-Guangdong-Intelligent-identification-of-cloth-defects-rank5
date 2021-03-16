@@ -1,7 +1,8 @@
 # fp16 settings
 import os
-
+import mmcv
 fp16 = dict(loss_scale=512.)
+
 # model settings
 model = dict(
     type='CascadeRCNN',
@@ -222,7 +223,8 @@ data = dict(
         img_prefix='/tcdata/guangdong1_round2_testB_20191024/',
         pipeline=test_pipeline))
 # optimizer
-optimizer = dict(type='SGD', lr=0.005, momentum=0.9, weight_decay=0.0001)
+# 只有一块显卡，学习率（lr）改为 1/4
+optimizer = dict(type='SGD', lr=0.005 / 4, momentum=0.9, weight_decay=0.0001)
 # optimizer = dict(type='SGD', lr=0.00375, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
 # learning policy
@@ -238,8 +240,9 @@ log_config = dict(
     interval=50,
     hooks=[
         dict(type='TextLoggerHook'),
-        # dict(type='TensorboardLoggerHook')
+        dict(type='TensorboardLoggerHook')
     ])
+
 # yapf:enable
 # runtime settings
 total_epochs = 70
