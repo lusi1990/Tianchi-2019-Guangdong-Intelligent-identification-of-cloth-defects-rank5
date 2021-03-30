@@ -46,7 +46,7 @@ model = dict(
             in_channels=256,
             fc_out_channels=1024,
             roi_feat_size=7,
-            num_classes=16,
+            num_classes=9,
             target_means=[0., 0., 0., 0.],
             target_stds=[0.1, 0.1, 0.2, 0.2],
             reg_class_agnostic=True,
@@ -59,7 +59,7 @@ model = dict(
             in_channels=256,
             fc_out_channels=1024,
             roi_feat_size=7,
-            num_classes=16,
+            num_classes=9,
             target_means=[0., 0., 0., 0.],
             target_stds=[0.05, 0.05, 0.1, 0.1],
             reg_class_agnostic=True,
@@ -72,7 +72,7 @@ model = dict(
             in_channels=256,
             fc_out_channels=1024,
             roi_feat_size=7,
-            num_classes=16,
+            num_classes=9,
             target_means=[0., 0., 0., 0.],
             target_stds=[0.033, 0.033, 0.067, 0.067],
             reg_class_agnostic=True,
@@ -168,7 +168,7 @@ test_cfg = dict(
 # dataset settings
 dataset_type = 'FabricDataset'
 PROJECT_HOME = '/home/lu/PycharmProjects/Tianchi-2019-Guangdong-Intelligent-identification-of-cloth-defects-rank5'
-data_root = os.path.join(PROJECT_HOME, 'data/data10/')
+data_root = os.path.join(PROJECT_HOME, 'data/data10')
 print('data10', data_root)
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
