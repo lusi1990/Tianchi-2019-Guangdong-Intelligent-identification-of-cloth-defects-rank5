@@ -9,6 +9,7 @@ mkdir -p ../data/fabric/template_Images
 mkdir -p ../data/fabric/annotations
 mkdir -p ../data/fabric/Annotations
 mkdir -p ../data/pretrained
+mkdir -p ../weights
 
 python3 copy_detect_images.py -d $DATA_HOME
 
@@ -25,6 +26,6 @@ wget https://open-mmlab.oss-cn-beijing.aliyuncs.com/mmdetection/models/cascade_r
 python transorfarm_concatenate_model.py
 
 CUDA_VISIBLE_DEVICES=0 ./dist_train.sh ../config/fabric_defect/cascade_rcnn_r50_fpn_70e.py 1
-CUDA_VISIBLE_DEVICES=0 ./dist_train.sh ../config/fabric_defect/cascade_rcnn_r50_fpn_400.py 1
+#CUDA_VISIBLE_DEVICES=0 ./dist_train.sh ../config/fabric_defect/cascade_rcnn_r50_fpn_400.py 1
 python publish_model.py ../data/work_dirs/cascade_rcnn_r50_fpn_70e/latest.pth ../data/work_dirs/cascade_rcnn_r50_fpn_70e/latest-submit.pth
-python publish_model.py ../data/work_dirs/cascade_rcnn_r50_fpn_400/latest.pth ../data/work_dirs/cascade_rcnn_r50_fpn_400/latest-submit.pth
+#python publish_model.py ../data/work_dirs/cascade_rcnn_r50_fpn_400/latest.pth ../data/work_dirs/cascade_rcnn_r50_fpn_400/latest-submit.pth
