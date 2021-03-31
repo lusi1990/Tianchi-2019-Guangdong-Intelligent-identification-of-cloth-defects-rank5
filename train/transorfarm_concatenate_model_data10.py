@@ -15,8 +15,8 @@ model_coco = torch.load(model_name)
 # weight
 model_coco["state_dict"]["backbone.conv1.weight"] = torch.cat([model_coco["state_dict"]["backbone.conv1.weight"]] * 2,
                                                               dim=1)
-# todo  需要添加如下代码才不会报错，为什么
-num_class = 9
+
+num_class = 10
 model_coco['state_dict']['bbox_head.0.fc_cls.weight'].resize_(num_class, 1024)
 model_coco['state_dict']['bbox_head.1.fc_cls.weight'].resize_(num_class, 1024)
 model_coco['state_dict']['bbox_head.2.fc_cls.weight'].resize_(num_class, 1024)
@@ -29,4 +29,4 @@ print(model_coco["state_dict"]["backbone.conv1.weight"].shape)
 
 # save new model
 torch.save(model_coco,
-           "../data/pretrained/concatenate_coco_pretrained_" + os.path.basename(model_name).split('.')[0] + ".pth")
+           "../data/pretrained/concatenate_coco_pretrained_cascade_rcnn_r50_fpn_20e_data10.pth")
